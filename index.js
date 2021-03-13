@@ -1,8 +1,9 @@
-import {NativeModules} from 'react-native';
-const {RNSaveAudio} = NativeModules;
+import { NativeModules } from "react-native";
+const { RNSaveAudio } = NativeModules;
 
 export default {
-    saveWav: (path, audio) => RNSaveAudio.saveWav(path, audio),
-}
+    saveWav: (path, audio, sampleFreq) =>
+        RNSaveAudio.saveWav(path, audio, sampleFreq),
+};
 
 //module.exports = NativeModules.RNSaveAudio;

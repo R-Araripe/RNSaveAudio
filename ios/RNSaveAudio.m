@@ -7,6 +7,7 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(saveWav:(NSString*)path
        andArray:(NSArray*)audio
+       sampleFreq:(NSNumber*)sampleFreq
     andacceptor:(RCTPromiseResolveBlock)resolve
     andrejecter:(RCTPromiseRejectBlock)reject){
 
@@ -19,7 +20,7 @@ RCT_EXPORT_METHOD(saveWav:(NSString*)path
         [newaudio insertObject:[NSNumber numberWithShort:tmp] atIndex:i];
     }
 
-    BOOL message = [self SaveFile:path andArray:newaudio];
+    BOOL message = [self SaveFile:path andArray:newaudio sampleFreq:sampleFreq];
     NSString *thingToReturn = @"true";
     if(message){
         resolve(thingToReturn);
@@ -52,7 +53,9 @@ RCT_EXPORT_METHOD(saveWav:(NSString*)path
 }
 
 -(bool) SaveFile:(NSString*)path
-        andArray:(NSMutableArray*)rawData {
+        andArray:(NSMutableArray*)rawData
+        sampleFreq:(NSNumber*)sampleFreq
+        {
     // WAVE header
     // see http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
     // https://stackoverflow.com/questions/32312508/audio-file-format-issue-in-objective-c iOS
@@ -65,7 +68,7 @@ RCT_EXPORT_METHOD(saveWav:(NSString*)path
         // create header byte-array
         long int totalAudioLen = [data length];
         long int totalDataLen = [data length]+36; //headerSize-8
-        int sampleRate = 44100;
+        int sampleRate = sampleFreq;
         SInt16 channels = 1;
         int byteRate = 2 * sampleRate;
 

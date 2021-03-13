@@ -6,6 +6,7 @@
 
 -(bool) SaveFile:(NSString*)path
         andArray:(NSMutableArray*)rawData;
+        sampleFreq:(NSNumber*)sampleFreq
 -(NSMutableData*) get16BitPcm:(NSMutableArray*)data;
 // debugging
 -(NSURL *) applicationDocumentsDirectory;

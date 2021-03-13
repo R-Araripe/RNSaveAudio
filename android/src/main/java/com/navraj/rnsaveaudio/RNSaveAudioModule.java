@@ -36,19 +36,19 @@ public class RNSaveAudioModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void saveWav(String path, ReadableArray audio, final Promise promise){
+    public void saveWav(String path, ReadableArray audio, Integer sampleFreq, final Promise promise){
         try {
             short[] newaudio = new short[audio.size()];
             for(int i=0; i<audio.size();i++){
                 newaudio[i] = (short) (audio.getInt(i) & 0xFFFF);
             }
-            boolean result = SaveFile(path, newaudio);
+            boolean result = SaveFile(path, newaudio, sampleFreq);
             promise.resolve(result);
         } catch (Exception ex) {
             promise.reject("ERR_UNEXPECTED_EXCEPTION", ex);
         }
     }
-    private boolean SaveFile(String path, short[] rawData) throws Exception{
+    private boolean SaveFile(String path, short[] rawData, int sampleFreq) throws Exception{
 
         DataOutputStream output = null;
         boolean ret = true;
@@ -64,8 +64,8 @@ public class RNSaveAudioModule extends ReactContextBaseJavaModule {
             writeInt(output, 16); // subchunk 1 size
             writeShort(output, (short) 1); // audio format (1 = PCM)
             writeShort(output, (short) 1); // number of channels
-            writeInt(output, 44100); // sample rate
-            writeInt(output, 44100 * 2); // byte rate
+            writeInt(output, sampleFreq); // sample rate
+            writeInt(output, sampleFreq * 2); // byte rate
             writeShort(output, (short) 2); // block align
             writeShort(output, (short) 16); // bits per sample
             writeString(output, "data"); // subchunk 2 id
@@ -81,6 +81,7 @@ public class RNSaveAudioModule extends ReactContextBaseJavaModule {
             output.write(bytes);
 
         } catch (Exception err) {
+            Log.e("Exception here in SaveFile :( ", err)
             return ret;
         } finally {
             if (output != null) {
